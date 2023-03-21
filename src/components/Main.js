@@ -10,7 +10,9 @@ class Main extends Component {
           event.preventDefault()
           const name = this.productName.value
           const price = window.web3.utils.toWei(this.productPrice.value.toString(), 'Ether')
-          this.props.createProduct(name, price)
+          const creationTime = window.web3.utils.toWei(this.creationTime.value.toString(), 'Ether')
+          const picAdd = this.picAdd.value
+          this.props.createProduct(name, price, creationTime, picAdd)
         }}>
           <div className="form-group mr-sm-2">
             <input
@@ -30,38 +32,55 @@ class Main extends Component {
               placeholder="Product Price"
               required />
           </div>
+          <div className="form-group mr-sm-2">
+            <input
+              id="creationTime"
+              type="text"
+              ref={(input) => { this.creationTime = input }}
+              className="form-control"
+              placeholder="Creation Time"
+              required />
+          </div>
+          <div className="form-group mr-sm-2">
+            <input
+              id="picAdd"
+              type="text"
+              ref={(input) => { this.picAdd = input }}
+              className="form-control"
+              placeholder="Pic Add" 
+              required />
+          </div>
           <button type="submit" className="btn btn-primary">Add Product</button>
         </form>
         <p>&nbsp;</p>
-        <h2>Buy Product</h2>
+        <h2>Product</h2>
         <table className="table">
           <thead>
             <tr>
               <th scope="col">#</th>
               <th scope="col">Name</th>
               <th scope="col">Price</th>
-              <th scope="col">Owner</th>
+              <th scope="col">NumRating</th>
               <th scope="col"></th>
             </tr>
           </thead>
           <tbody id="productList">
-            { this.props.products.map((product, key) => {
+            { this.props.productInfos.map((productInfo, key) => {
               return(
                 <tr key={key}>
-                  <th scope="row">{product.id.toString()}</th>
-                  <td>{product.name}</td>
-                  <td>{window.web3.utils.fromWei(product.price.toString(), 'Ether')} Eth</td>
-                  <td>{product.owner}</td>
+                  <th scope="row">{productInfo.id.toString()}</th>
+                  <td>{productInfo.name}</td>
+                  <td>{window.web3.utils.fromWei(productInfo.price.toString(), 'Ether')} Eth</td>
+                  <td>{productInfo.numRatings.toString()}</td>
                   <td>
-                    { !product.purchased
+                    { productInfo.active
                       ? <button
-                          name={product.id}
-                          value={product.price}
+                          id={productInfo.id}
                           onClick={(event) => {
-                            this.props.purchaseProduct(event.target.name, event.target.value)
+                            this.props.stopPricing(event.target.id)
                           }}
                         >
-                          Buy
+                          Stop
                         </button>
                       : null
                     }
@@ -71,6 +90,34 @@ class Main extends Component {
             })}
           </tbody>
         </table>
+        <p>&nbsp;</p>
+        <h3>Set Price</h3>
+        <form onSubmit={(event) => {
+          event.preventDefault()
+          const id = window.web3.utils.toWei(this.productId.value.toString(), 'Ether')
+          const price = window.web3.utils.toWei(this.productPrice.value.toString(), 'Ether')
+          this.props.setPrice(id, price)
+        }}>
+          <div className="form-group mr-sm-2">
+            <input
+              id="productId"
+              type="text"
+              ref={(input) => { this.productId = input }}
+              className="form-control"
+              placeholder="Product Id"
+              required />
+          </div>
+          <div className="form-group mr-sm-2">
+            <input
+              id="productPrice"
+              type="text"
+              ref={(input) => { this.productPrice = input }}
+              className="form-control"
+              placeholder="Product Price"
+              required />
+          </div>
+          <button type="submit" className="btn btn-primary">Set Price</button>
+        </form>
       </div>
     );
   }
