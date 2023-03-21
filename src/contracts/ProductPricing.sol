@@ -26,12 +26,13 @@ contract ProductPricing {
     // Lấy số thứ tự đánh giá cuối cùng của sản phẩm
     function getLatest(uint _id) public view returns (uint) {
         require( _id <= getNumberProduct());
+        uint a=0;
         for (uint i = 1 ; i <= productRatingCount; i++) {
             if (products[i].id == _id ) {
-                return i;
+                a=i;
             }
         }
-        return 0;
+        return a;
     }
     // Check người dùng đã đánh giá sản phẩm chưa
     function check(uint _id) public view returns (bool) {
